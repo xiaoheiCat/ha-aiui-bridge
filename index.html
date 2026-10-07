@@ -6,9 +6,9 @@
   <meta name="referrer" content="no-referrer">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; base-uri 'none'; form-action 'self'">
   <meta name="color-scheme" content="dark">
-  <title>Home Assistant · Rokid 配置</title>
-  <link rel="stylesheet" href="./styles.css">
-  <script type="module" src="./setup.js"></script>
+  <title>Home Assistant AIUI · 手机配对</title>
+  <link rel="stylesheet" href="./styles.css?v=1.0.8">
+  <script type="module" src="./setup.js?v=1.0.8"></script>
 </head>
 <body>
   <main class="app">
@@ -17,25 +17,27 @@
     <section id="connect-screen">
       <p class="eyebrow">YOUR HOME, IN SIGHT</p>
       <h1>在手机上连接家，<br>在眼镜上轻松控制。</h1>
-      <p class="lead">用 Home Assistant 账号登录，一次配对，就能通过 Rokid 语音和眼镜界面控制家中的设备。</p>
-      <div class="connection-card"><span class="label">当前 HOME ASSISTANT</span><strong id="instance-url">正在读取地址…</strong><p>配置页由你自己的 Home Assistant 提供。登录时将跳转到其官方授权页面。</p></div>
+      <p class="lead">先将 Home Assistant 智能体添加到 Rokid Glasses，再用手机登录并配对。完成后，直接对乐奇说家居指令，眼镜显示设备真实状态，无需先打开应用或触摸操作。</p>
+      <div class="connection-card"><span class="label">当前 HOME ASSISTANT</span><strong id="instance-url">正在读取地址…</strong><p>手机只用于登录、选择设备类型和生成配对码。配置页由你自己的 Home Assistant 提供，登录时跳转到其原生授权页面。</p></div>
       <button id="login" class="primary">使用 Home Assistant 登录 <span aria-hidden="true">↗</span></button>
-      <p class="hint">无需手工创建访问令牌，无需配置 conversation 实体。</p>
+      <p class="hint">无需手工创建访问令牌，也无需额外运行服务器。首次眼镜配对需要点击触控板确认，日常控制只需语音。</p>
       <p id="http-note" class="hint" hidden>当前使用局域网 HTTP 地址，请仅在可信家庭网络中配对；远程访问请使用 HTTPS。</p>
     </section>
     <section id="devices-screen" hidden>
       <p class="eyebrow">CHOOSE WHAT YOU CONTROL</p>
       <h1 id="home-name">我的家</h1>
-      <p class="lead">选择希望在眼镜中查看和控制的设备类型。智能体会自动读取真实设备及其支持的操作。</p>
+      <p class="lead">选择允许智能体查看和控制的设备类型。配对后，直接说设备名称和操作，眼镜只显示本次操作对应的真实状态卡片。</p>
       <div id="domain-list" class="domain-list"></div>
       <p class="hint">这里的选择用于约束智能体操作范围；授权本身仍遵循你的 Home Assistant 账号权限。</p>
+      <div class="connection-card"><span class="label">按房间控制</span><p>在 Home Assistant 中将灯分配到对应区域，并在这里勾选灯光，即可说「乐奇，打开阳台所有灯」或「乐奇，关闭卧室全部灯」。使用实际区域名称。离线灯也会尝试发送开关请求，单台失败不会阻止其他灯。</p></div>
       <button id="generate" class="primary">生成眼镜配对码 <span aria-hidden="true">→</span></button>
       <button id="cancel" class="secondary">取消并撤销本次授权</button>
     </section>
     <section id="pair-screen" hidden>
       <p class="eyebrow">READY TO PAIR</p>
       <h1>用眼镜扫描，<br>让家出现在眼前。</h1>
-      <p class="lead">让眼镜看向此二维码，说「乐奇，用 Home Assistant 扫描配对码」。核对眼镜显示的家庭地址后，点击一次眼镜触控板确认连接。看到已连接后，再点击一次返回语音控制。</p>
+      <p class="lead">让眼镜看向此二维码，说「乐奇，配对 Home Assistant」。扫码页会自动开始扫描。识别后核对眼镜显示的家庭地址，点击一次触控板确认；看到已连接后，再点击一次返回。</p>
+      <p class="hint">扫码全屏中使用触控板确认和返回，退出后再说「乐奇」进行语音控制。</p>
       <div class="qr-card"><canvas id="qr" aria-label="包含家庭连接凭据的眼镜配对二维码"></canvas><strong id="countdown">05:00</strong><span class="qr-caption">有效期内完成扫描</span></div>
       <p class="privacy">二维码包含连接凭据，请勿截图或分享。配对完成后点击下方按钮隐藏。</p>
       <button id="done" class="primary">已在眼镜中确认，隐藏配对码</button>
@@ -44,9 +46,9 @@
     <section id="done-screen" hidden>
       <div class="done-mark" aria-hidden="true">✓</div>
       <p class="eyebrow">YOUR HOME IS READY</p>
-      <h1>配置已交给眼镜。</h1>
-      <p class="lead">以后说「乐奇，打开客厅灯」「乐奇，卧室空调 26 度」或「乐奇，客厅灯亮度百分之 70」。无需先打开应用，眼镜会显示设备状态卡片。</p>
-      <div class="connection-card"><span class="label">管理连接</span><p>在眼镜的连接设置中解除绑定，或到 Home Assistant 个人资料的安全页面撤销对应授权。</p></div>
+      <h1>配对码已隐藏。</h1>
+      <p class="lead">确认眼镜已显示「已连接」后，直接说「乐奇，打开台灯」「乐奇，台灯亮度百分之七十」「乐奇，卧室空调二十六度」或「乐奇，打开阳台所有灯」。使用你家的实际设备或区域名称，无需先打开应用，状态卡片无需触摸。</p>
+      <div class="connection-card"><span class="label">管理连接</span><p>说「乐奇，查询 Home Assistant 连接状态」检查连接，或说「乐奇，解除 Home Assistant 绑定」解除连接。也可到 Home Assistant 个人资料的安全页面撤销对应授权。</p></div>
       <button id="another" class="secondary">为另一副眼镜重新授权</button>
     </section>
     <p id="status" class="status" role="status" aria-live="polite" hidden></p>
